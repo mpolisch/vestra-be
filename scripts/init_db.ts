@@ -19,24 +19,30 @@ const pool = new Pool({ connectionString });
 async function runMigrations() {
     const migrationsDir = path.join(__dirname, '../migrations');
 
-    const files = fs
-        .readdirSync(migrationsDir)
-        .filter((f) => f.endsWith('.sql'))
-        .sort(); // ensures 001_, 002_, 003_ run in order
+    try {
+        const files = fs
+            .readdirSync(migrationsDir)
+            .filter((f) => f.endsWith('.sql'))
+            .sort(); // ensures 001_, 002_, 003_ run in order
 
-    for (const file of files) {
-        const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
-        try {
-            await pool.query(sql);
-            console.log(`✓ ${file}`);
-        } catch (err) {
-            console.error(`✗ ${file}:`, err);
-            process.exit(1); // stop on first failure
+        for (const file of files) {
+            const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
+            try {
+                await pool.query(sql);
+                console.log(`✓ ${file}`);
+            } catch (err) {
+                console.error(`✗ ${file}:`, err);
+                throw err; // stop on first failure and let top-level handler set exit code
+            }
         }
-    }
 
-    await pool.end();
-    console.log('All migrations complete');
+        console.log('All migrations complete');
+    } finally {
+        await pool.end();
+    }
 }
 
-runMigrations();
+runMigrations().catch((err) => {
+    console.error('Migration run failed:', err);
+    process.exitCode = 1;
+});
