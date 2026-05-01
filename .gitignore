@@ -125,6 +125,9 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
+#includes local development configuration (auto-format on change)
+.vscode/
+
 # pnpm
 .pnpm-store
 
