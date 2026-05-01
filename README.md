@@ -26,7 +26,7 @@ Frontend: [vestra-fe](https://github.com/mpolisch/vestra-fe)
 
 ## Database Schema (ERD)
 
-![ERD](public/Vestra%20DB%20ERD.jpg)
+![ERD](src/assets/Vestra%20DB%20ERD.jpg)
 
 DB Schema is subject to change.
 
