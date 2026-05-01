@@ -123,3 +123,4 @@ API runs at [http://localhost:4000](http://localhost:4000)
 - Conversation summarization for long chat histories
 - PDF export of retirement plan
 - Automated security scanning in CI
+- Migrations tracking table, update init_db.ts to skip already-run files, and auto-run migrations on deploy
