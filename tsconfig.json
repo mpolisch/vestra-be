@@ -1,33 +1,31 @@
 {
-  "compilerOptions": {
+    "compilerOptions": {
+        "module": "nodenext",
+        "target": "esnext",
+        "types": [],
 
-    "module": "nodenext",
-    "target": "esnext",
-    "types": [],
+        // Other Outputs
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
 
+        // Stricter Typechecking Options
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": true,
 
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+        //File Layout
+        "rootDir": "./src",
+        "outDir": "./dist",
 
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    //File Layout
-    "rootDir": "./src",
-    "outDir": "./dist",
-
-    // Recommended Options
-    "strict": true,
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-  },
-  "include": ["src/**/*"]
+        // Recommended Options
+        "strict": true,
+        "moduleResolution": "NodeNext",
+        "esModuleInterop": true,
+        "verbatimModuleSyntax": true,
+        "isolatedModules": true,
+        "noUncheckedSideEffectImports": true,
+        "moduleDetection": "force",
+        "skipLibCheck": true
+    },
+    "include": ["src/**/*"]
 }
