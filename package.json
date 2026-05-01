@@ -10,6 +10,7 @@
         "lint": "eslint . --max-warnings 0",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+        "typecheck": "npx tsc --noEmit",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
