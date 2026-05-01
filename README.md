@@ -4,7 +4,7 @@ The backend for Vestra, built with [Express](https://expressjs.com) and TypeScri
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 20.19.0+
 - npm
 
 ## Getting Started
