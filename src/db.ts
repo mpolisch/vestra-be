@@ -14,7 +14,6 @@ const pool = new Pool({
 
 pool.on('error', (err) => {
     console.error('Unexpected pool error:', err);
-    process.exit(1);
 });
 
 const shutdown = async () => {
@@ -26,4 +25,4 @@ const shutdown = async () => {
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
 
-export default pool;
+export { pool };

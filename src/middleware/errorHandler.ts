@@ -33,4 +33,4 @@ const errorHandler: ErrorRequestHandler = (
     res.status(statusCode).json({ error: message });
 };
 
-export default errorHandler;
+export { errorHandler };
