@@ -7,6 +7,9 @@
 ## Security Considerations
 <!-- How this PR handles sensitive data, auth, input validation, or access control. -->
 
+## Related Issues
+<!-- What issue does this PR close? -->
+
 ## Testing
 **What's covered:**
 - [ ] Unit tests
