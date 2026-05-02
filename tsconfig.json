@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "nodenext",
         "target": "esnext",
-        "types": ["jest"],
+        "types": [],
 
         // Other Outputs
         "sourceMap": true,
@@ -27,5 +27,6 @@
         "moduleDetection": "force",
         "skipLibCheck": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": ["src/**/*.test.ts"]
 }
