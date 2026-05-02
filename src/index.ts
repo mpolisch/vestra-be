@@ -1,15 +1,12 @@
+import 'dotenv/config';
+import './db.js';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import type { Request, Response } from 'express';
 import { authRouter } from './routes/auth.js';
 import { errorHandler } from './middleware/errorHandler.js';
-
-dotenv.config();
-
-import './db.js';
 
 const app = express();
 

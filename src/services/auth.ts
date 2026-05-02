@@ -1,27 +1,25 @@
 import bcrypt from 'bcrypt';
 import { pool } from '../db.js';
-import { AppError } from '../utils/AppError.js';
 import type { PublicUser } from '../types/index.js';
 import type { RegisterDTO } from '../utils/schemas.js';
 
-export const registerUser = async (data: RegisterDTO): Promise<PublicUser> => {
+export const registerUser = async (data: RegisterDTO): Promise<PublicUser | null> => {
     const { email, password } = data;
 
-    // 1. Check if user exists
-    const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
-    if (existingUser.rowCount && existingUser.rowCount > 0) {
-        throw new AppError('Email already in use', 400);
-    }
-
-    // 2. Hash password
+    // Hash password
     const saltRounds = 12;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // 3. Insert user
+    // ON CONFLICT DO NOTHING prevents email enumeration and is atomic —
+    // no race condition between a SELECT check and INSERT.
     const result = await pool.query(
-        'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at, updated_at',
+        `INSERT INTO users (email, password_hash)
+         VALUES ($1, $2)
+         ON CONFLICT (email) DO NOTHING
+         RETURNING id, email, created_at, updated_at`,
         [email, passwordHash],
     );
 
-    return result.rows[0];
+    // Returns null if email was already taken — caller always responds with 201
+    return result.rows[0] ?? null;
 };
