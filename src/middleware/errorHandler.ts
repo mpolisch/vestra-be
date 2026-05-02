@@ -30,7 +30,7 @@ const errorHandler: ErrorRequestHandler = (
         ? (err as AppError).message
         : 'An unexpected error occurred. Please try again later.';
 
-    res.status(statusCode).json({ error: message });
+    res.status(statusCode).json({ status: 'error', message });
 };
 
 export { errorHandler };

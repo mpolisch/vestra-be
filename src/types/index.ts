@@ -8,11 +8,6 @@ export interface User {
 
 export type PublicUser = Omit<User, 'password_hash'>;
 
-export interface RegisterDTO {
-    email: string;
-    password: string;
-}
-
 export interface AuthPayload {
     userId: string;
     email: string;

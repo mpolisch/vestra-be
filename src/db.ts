@@ -14,6 +14,7 @@ const pool = new Pool({
 
 pool.on('error', (err) => {
     console.error('Unexpected pool error:', err);
+    process.exit(1);
 });
 
 const shutdown = async () => {
