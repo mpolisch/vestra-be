@@ -27,6 +27,6 @@
         "moduleDetection": "force",
         "skipLibCheck": true
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "src/types/express.d.ts"],
     "exclude": ["src/**/*.test.ts"]
 }
