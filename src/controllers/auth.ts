@@ -1,9 +1,7 @@
 import type { Request, Response } from 'express';
 import * as authService from '../services/auth.js';
 import { sendSuccess } from '../utils/response.js';
-
-const COOKIE_NAME = 'token';
-const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+import { COOKIE_NAME, COOKIE_MAX_AGE } from '../config/constants.js';
 
 export const register = async (req: Request, res: Response) => {
     await authService.registerUser(req.body);

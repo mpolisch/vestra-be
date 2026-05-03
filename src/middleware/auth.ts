@@ -2,11 +2,12 @@ import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppError } from '../utils/AppError.js';
 import type { AuthPayload } from '../types/index.js';
+import { COOKIE_NAME } from '../config/constants.js';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const requireAuth = (req: Request, res: Response, next: NextFunction): void => {
-    const token = req.cookies?.token as string | undefined;
+    const token = req.cookies?.[COOKIE_NAME] as string | undefined;
 
     if (!token) {
         return next(new AppError('Authentication required. Please log in.', 401));
