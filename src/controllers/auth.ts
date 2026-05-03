@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import * as authService from '../services/auth.js';
 import { sendSuccess } from '../utils/response.js';
+import { COOKIE_NAME, COOKIE_MAX_AGE } from '../config/constants.js';
 
 export const register = async (req: Request, res: Response) => {
     await authService.registerUser(req.body);
@@ -11,4 +12,32 @@ export const register = async (req: Request, res: Response) => {
         { message: 'If this email is available, your account has been created.' },
         201,
     );
+};
+
+export const login = async (req: Request, res: Response) => {
+    const { user, token } = await authService.loginUser(req.body);
+
+    res.cookie(COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: COOKIE_MAX_AGE,
+        path: '/',
+    });
+
+    return sendSuccess(res, user);
+};
+
+export const logout = (_req: Request, res: Response) => {
+    res.clearCookie(COOKIE_NAME, {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+    });
+    return sendSuccess(res, { message: 'Logged out successfully' });
+};
+
+export const me = (req: Request, res: Response) => {
+    return sendSuccess(res, req.user!);
 };
