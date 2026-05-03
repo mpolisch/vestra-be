@@ -1,5 +1,11 @@
 import 'dotenv/config';
 import './db.js';
+
+const REQUIRED_VARS = ['JWT_SECRET', 'DATABASE_URL', 'CORS_ORIGIN'] as const;
+for (const varName of REQUIRED_VARS) {
+    if (!process.env[varName]) throw new Error(`Missing required env var: ${varName}`);
+}
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -14,12 +20,12 @@ app.use(helmet());
 
 app.use(
     cors({
-        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+        origin: process.env.CORS_ORIGIN,
         credentials: true,
     }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
