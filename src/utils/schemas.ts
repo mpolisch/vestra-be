@@ -89,31 +89,11 @@ export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
     }
 });
 
-export const updatePlanSchema = planBaseSchema.partial().superRefine((data, ctx) => {
-    if (
-        data.current_age !== undefined &&
-        data.retirement_age !== undefined &&
-        data.current_age >= data.retirement_age
-    ) {
-        ctx.addIssue({
-            code: 'custom',
-            message: 'Retirement age must be greater than current age',
-            path: ['retirement_age'],
-        });
-    }
-
-    if (
-        data.monthly_contributions !== undefined &&
-        data.annual_income !== undefined &&
-        data.monthly_contributions * 12 > data.annual_income
-    ) {
-        ctx.addIssue({
-            code: 'custom',
-            message: 'Monthly contributions cannot exceed annual income',
-            path: ['monthly_contributions'],
-        });
-    }
-});
+// Cross-field invariants (age gap, income vs contributions, balance totals, retirement goal)
+// cannot be safely validated here because PATCH payloads are partial — we only see the fields
+// being changed, not the full record. Validation must happen in the plan service after merging
+// the incoming fields with the existing DB row.
+export const updatePlanSchema = planBaseSchema.partial();
 
 export type CreatePlanDTO = z.infer<typeof createPlanSchema>;
 export type UpdatePlanDTO = z.infer<typeof updatePlanSchema>;
