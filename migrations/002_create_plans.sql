@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS plans (
     tfsa_balance DECIMAL(12,2) NOT NULL DEFAULT 0,
     rrsp_balance DECIMAL(12,2) NOT NULL DEFAULT 0,
     fhsa_balance DECIMAL(12,2) NOT NULL DEFAULT 0,
-    contribution_priority VARCHAR(50) CHECK (contribution_priority IN ('tfsa_first', 'balanced', 'rrsp_heavy')),
+    contribution_priority VARCHAR(50) NOT NULL DEFAULT 'tfsa_first' CHECK (contribution_priority IN ('tfsa_first', 'balanced', 'rrsp_heavy')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
