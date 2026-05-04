@@ -1,7 +1,8 @@
 import 'dotenv/config';
-import './db.js';
 
-const REQUIRED_VARS = ['JWT_SECRET', 'DATABASE_URL', 'CORS_ORIGIN'] as const;
+// DATABASE_URL is validated inside db.ts before the pool is created.
+// Validate the remaining vars here before any other imports run.
+const REQUIRED_VARS = ['JWT_SECRET', 'CORS_ORIGIN'] as const;
 for (const varName of REQUIRED_VARS) {
     if (!process.env[varName]) throw new Error(`Missing required env var: ${varName}`);
 }
@@ -30,8 +31,8 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to the backend server!');
+app.get('/health', (_req: Request, res: Response) => {
+    res.json({ status: 'ok' });
 });
 
 app.use(errorHandler);
