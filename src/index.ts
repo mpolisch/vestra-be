@@ -13,6 +13,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import type { Request, Response } from 'express';
 import { authRouter } from './routes/auth.js';
+import { plansRouter } from './routes/plans.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -30,6 +31,7 @@ app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
+app.use('/api/plans', plansRouter);
 
 app.get('/health', (_req: Request, res: Response) => {
     res.json({ status: 'ok' });
