@@ -20,3 +20,100 @@ export const loginSchema = z.object({
 });
 
 export type LoginDTO = z.infer<typeof loginSchema>;
+
+export const planBaseSchema = z.object({
+    name: z.string().trim().max(100, 'Plan name is too long').optional(),
+    current_age: z
+        .number()
+        .int('Age must be a whole number')
+        .min(18, 'Must be at least 18')
+        .max(80, 'Must be 80 or under'),
+    retirement_age: z
+        .number()
+        .int('Age must be a whole number')
+        .min(30, 'Retirement age must be at least 30')
+        .max(90, 'Retirement age must be 90 or under'),
+    annual_income: z.number().positive('Annual income must be positive'),
+    current_savings: z.number().min(0, 'Current savings cannot be negative'),
+    monthly_contributions: z.number().positive('Monthly contributions must be positive'),
+    risk_tolerance: z.enum(['conservative', 'moderate', 'aggressive'], {
+        error: 'Invalid risk tolerance',
+    }),
+    retirement_goal: z.number().positive('Retirement goal must be positive').optional(),
+    tfsa_balance: z.number().min(0, 'TFSA balance cannot be negative'),
+    rrsp_balance: z.number().min(0, 'RRSP balance cannot be negative'),
+    fhsa_balance: z.number().min(0, 'FHSA balance cannot be negative'),
+    contribution_priority: z
+        .enum(['tfsa_first', 'balanced', 'rrsp_heavy'], {
+            error: 'Invalid contribution priority',
+        })
+        .default('tfsa_first'),
+});
+
+export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
+    //Age validation
+    if (data.current_age >= data.retirement_age) {
+        ctx.addIssue({
+            code: 'custom',
+            message: 'Retirement age must be greater than current age',
+            path: ['retirement_age'],
+        });
+    }
+
+    //Income vs. contributions
+    if (data.monthly_contributions * 12 > data.annual_income) {
+        ctx.addIssue({
+            code: 'custom',
+            message: 'Monthly contributions over a 12 month period cannot exceed annual income',
+            path: ['monthly_contributions'],
+        });
+    }
+
+    //Account balances vs. total savings
+    const accountTotal = data.tfsa_balance + data.rrsp_balance + data.fhsa_balance;
+    if (accountTotal > data.current_savings) {
+        ctx.addIssue({
+            code: 'custom',
+            message: 'Sum of account balances cannot exceed total current savings',
+            path: ['current_savings'],
+        });
+    }
+
+    //Retirement goal vs. current savings
+    if (data.retirement_goal !== undefined && data.retirement_goal < data.current_savings) {
+        ctx.addIssue({
+            code: 'custom',
+            message: 'Retirement goal should be greater than current savings',
+            path: ['retirement_goal'],
+        });
+    }
+});
+
+export const updatePlanSchema = planBaseSchema.partial().superRefine((data, ctx) => {
+    if (
+        data.current_age !== undefined &&
+        data.retirement_age !== undefined &&
+        data.current_age >= data.retirement_age
+    ) {
+        ctx.addIssue({
+            code: 'custom',
+            message: 'Retirement age must be greater than current age',
+            path: ['retirement_age'],
+        });
+    }
+
+    if (
+        data.monthly_contributions !== undefined &&
+        data.annual_income !== undefined &&
+        data.monthly_contributions * 12 > data.annual_income
+    ) {
+        ctx.addIssue({
+            code: 'custom',
+            message: 'Monthly contributions cannot exceed annual income',
+            path: ['monthly_contributions'],
+        });
+    }
+});
+
+export type CreatePlanDTO = z.infer<typeof createPlanSchema>;
+export type UpdatePlanDTO = z.infer<typeof updatePlanSchema>;
