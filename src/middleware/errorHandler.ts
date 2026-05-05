@@ -9,6 +9,13 @@ const errorHandler: ErrorRequestHandler = (
 ) => {
     if (res.headersSent) return next(err);
 
+    if ((err as { code?: string }).code === '22P02') {
+        return res.status(404).json({
+            status: 'error',
+            message: 'Resource not found',
+        });
+    }
+
     const statusCode = err instanceof AppError ? err.statusCode : 500;
     const is5xx = statusCode >= 500;
 
