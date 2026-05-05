@@ -9,6 +9,13 @@ const errorHandler: ErrorRequestHandler = (
 ) => {
     if (res.headersSent) return next(err);
 
+    if ((err as { code?: string }).code === '22P02') {
+        return res.status(404).json({
+            status: 'error',
+            message: 'Resource not found',
+        });
+    }
+
     const statusCode = err instanceof AppError ? err.statusCode : 500;
     const is5xx = statusCode >= 500;
 
@@ -25,10 +32,10 @@ const errorHandler: ErrorRequestHandler = (
         });
     }
 
-    const expose = err instanceof AppError ? err.expose : false;
-    const message = expose
-        ? (err as AppError).message
-        : 'An unexpected error occurred. Please try again later.';
+    const message =
+        err instanceof AppError
+            ? err.message
+            : 'An unexpected error occurred. Please try again later.';
 
     res.status(statusCode).json({ status: 'error', message });
 };
