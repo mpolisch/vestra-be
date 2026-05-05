@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as plansController from '../controllers/plans.js';
+import * as projectionController from '../controllers/projection.js';
 import { validate } from '../middleware/validate.js';
 import { requireAuth } from '../middleware/auth.js';
 import { createPlanSchema, updatePlanSchema } from '../utils/schemas.js';
@@ -11,5 +12,6 @@ router.post('/', requireAuth, validate(createPlanSchema), plansController.create
 router.get('/:id', requireAuth, plansController.getPlanById);
 router.put('/:id', requireAuth, validate(updatePlanSchema), plansController.updatePlan);
 router.delete('/:id', requireAuth, plansController.deletePlan);
+router.get('/:id/projection', requireAuth, projectionController.getProjection);
 
 export { router as plansRouter };
