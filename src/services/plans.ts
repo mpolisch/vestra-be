@@ -3,7 +3,7 @@ import { AppError } from '../utils/AppError.js';
 import type { Plan } from '../types/index.js';
 import type { CreatePlanDTO, UpdatePlanDTO } from '../utils/schemas.js';
 
-// Defence-in-depth: even though keys come from Zod, never allow arbitrary column names in SQL.
+// Defence-in-depth: even though keys come from Zod, never allow arbitrary column names in SQL
 const ALLOWED_UPDATE_COLUMNS = new Set([
     'name',
     'current_age',
@@ -70,10 +70,10 @@ export const updatePlan = async (
     userId: string,
     data: UpdatePlanDTO,
 ): Promise<Plan> => {
-    // Ownership check + fetch existing values needed for cross-field merge.
+    // Ownership check + fetch existing values needed for cross-field merge
     const existing = await getPlanById(planId, userId);
 
-    // pg returns NUMERIC columns as strings — coerce to number before comparisons.
+    // pg returns NUMERIC columns as strings, coerce to number before comparisons
     const merged = {
         current_age: data.current_age ?? existing.current_age,
         retirement_age: data.retirement_age ?? existing.retirement_age,
@@ -89,7 +89,7 @@ export const updatePlan = async (
         fhsa_balance: data.fhsa_balance ?? parseFloat(existing.fhsa_balance),
     };
 
-    // Cross-field invariants on the fully merged record.
+    // Cross-field invariants on the fully merged record
     if (merged.current_age >= merged.retirement_age) {
         throw new AppError('Retirement age must be greater than current age', 422);
     }
@@ -107,7 +107,7 @@ export const updatePlan = async (
         throw new AppError('Retirement goal should be greater than current savings', 422);
     }
 
-    // Build parameterised SET clause from the validated DTO.
+    // Build parameterised SET clause from the validated DTO
     const setClauses: string[] = [];
     const values: unknown[] = [];
     let idx = 1;
@@ -119,7 +119,7 @@ export const updatePlan = async (
         idx++;
     }
 
-    // Nothing changed — return the existing plan rather than issuing a no-op UPDATE.
+    // If nothing changed return the existing plan rather than issuing a no-op UPDATE
     if (setClauses.length === 0) return existing;
 
     values.push(planId, userId);

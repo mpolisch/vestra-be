@@ -51,7 +51,7 @@ export const planBaseSchema = z.object({
 });
 
 export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
-    //Age validation
+    // Age validation
     if (data.current_age >= data.retirement_age) {
         ctx.addIssue({
             code: 'custom',
@@ -60,7 +60,7 @@ export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
         });
     }
 
-    //Income vs. contributions
+    // Income vs. contributions
     if (data.monthly_contributions * 12 > data.annual_income) {
         ctx.addIssue({
             code: 'custom',
@@ -69,7 +69,7 @@ export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
         });
     }
 
-    //Account balances vs. total savings
+    // Account balances vs. total savings
     const accountTotal = data.tfsa_balance + data.rrsp_balance + data.fhsa_balance;
     if (accountTotal > data.current_savings) {
         ctx.addIssue({
@@ -79,7 +79,7 @@ export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
         });
     }
 
-    //Retirement goal vs. current savings
+    // Retirement goal vs. current savings
     if (data.retirement_goal !== undefined && data.retirement_goal < data.current_savings) {
         ctx.addIssue({
             code: 'custom',
@@ -89,10 +89,7 @@ export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
     }
 });
 
-// Cross-field invariants (age gap, income vs contributions, balance totals, retirement goal)
-// cannot be safely validated here because PATCH payloads are partial — we only see the fields
-// being changed, not the full record. Validation must happen in the plan service after merging
-// the incoming fields with the existing DB row.
+// Cross-field invariants (age gap, income vs contributions, balance totals, retirement goal) cannot be safely validated here
 export const updatePlanSchema = planBaseSchema.partial();
 
 export type CreatePlanDTO = z.infer<typeof createPlanSchema>;

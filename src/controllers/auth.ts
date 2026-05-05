@@ -5,8 +5,7 @@ import { COOKIE_NAME, COOKIE_MAX_AGE } from '../config/constants.js';
 
 export const register = async (req: Request, res: Response) => {
     await authService.registerUser(req.body);
-    // Always return 201 regardless of whether the email was already taken.
-    // This prevents email enumeration — the response is identical either way.
+    // Always return 201 regardless of whether the email was already taken
     return sendSuccess(
         res,
         { message: 'If this email is available, your account has been created.' },

@@ -11,11 +11,10 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 export const registerUser = async (data: RegisterDTO): Promise<PublicUser | null> => {
     const { email, password } = data;
 
-    // Hash password
     const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
-    // ON CONFLICT DO NOTHING prevents email enumeration and is atomic —
-    // no race condition between a SELECT check and INSERT.
+    // ON CONFLICT DO NOTHING prevents email enumeration and is atomic
+    // No race condition between a SELECT check and INSERT
     const result = await pool.query(
         `INSERT INTO users (email, password_hash)
          VALUES ($1, $2)
@@ -24,7 +23,7 @@ export const registerUser = async (data: RegisterDTO): Promise<PublicUser | null
         [email, passwordHash],
     );
 
-    // Returns null if email was already taken — caller always responds with 201
+    // Returns null if email was already taken, caller always responds with 201
     return result.rows[0] ?? null;
 };
 
@@ -38,8 +37,7 @@ export const loginUser = async (data: LoginDTO): Promise<{ user: PublicUser; tok
 
     const user = result.rows[0];
 
-    // Use a constant-time compare even when user doesn't exist to prevent
-    // timing attacks that could reveal whether an email is registered.
+    // Use a constant-time compare even when user doesn't exist to prevent timing attacks that could reveal whether an email is registered
     const passwordHash = user?.password_hash ?? '$2b$12$invalidhashfortimingattackprevention';
     const isValid = await bcrypt.compare(password, passwordHash);
 

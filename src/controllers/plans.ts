@@ -4,7 +4,7 @@ import { sendSuccess } from '../utils/response.js';
 
 export const getPlansByUser = async (req: Request, res: Response) => {
     const plans = await plansService.getPlansByUser(req.user!.userId);
-    //Always return 200
+
     return sendSuccess(res, plans);
 };
 
