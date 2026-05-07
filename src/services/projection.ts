@@ -83,7 +83,7 @@ export const getProjection = async (
         });
     }
 
-    // Step 5: Build summary
+    // Build summary
     const finalBalance = dataPoints[dataPoints.length - 1]!.total_balance;
     const retirementGoal = plan.retirement_goal !== null ? parseFloat(plan.retirement_goal) : null;
 
