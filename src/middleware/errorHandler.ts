@@ -9,6 +9,7 @@ const errorHandler: ErrorRequestHandler = (
 ) => {
     if (res.headersSent) return next(err);
 
+    // Catches invalid_text_representation from pg (malformed UUID)
     if ((err as { code?: string }).code === '22P02') {
         return res.status(404).json({
             status: 'error',

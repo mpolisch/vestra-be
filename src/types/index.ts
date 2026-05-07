@@ -31,3 +31,26 @@ export interface Plan {
     created_at: Date;
     updated_at: Date;
 }
+
+export interface ProjectionDataPoint {
+    age: number;
+    year: number;
+    total_balance: number;
+    tfsa_balance: number;
+    rrsp_balance: number;
+    fhsa_balance: number;
+    unregistered_balance: number;
+    yearly_contribution: number;
+}
+
+export interface ProjectionSummary {
+    projected_balance_at_retirement: number;
+    years_until_retirement: number;
+    will_meet_goal: boolean | null;
+    shortfall: number | null;
+}
+
+export interface ProjectionResponse {
+    data_points: ProjectionDataPoint[];
+    summary: ProjectionSummary;
+}
