@@ -69,16 +69,21 @@ export const getProjection = async (
         fhsa *= 1 + growthRate;
         unregistered *= 1 + UNREGISTERED_GROWTH_RATE;
 
-        const total = tfsa + rrsp + fhsa + unregistered;
+        const roundedTfsa = Math.round(tfsa);
+        const roundedRrsp = Math.round(rrsp);
+        const roundedFhsa = Math.round(fhsa);
+        const roundedUnregistered = Math.round(unregistered);
+        const roundedTotal =
+            roundedTfsa + roundedRrsp + roundedFhsa + roundedUnregistered;
 
         dataPoints.push({
             age,
             year: currentYear + (age - plan.current_age),
-            total_balance: Math.round(total),
-            tfsa_balance: Math.round(tfsa),
-            rrsp_balance: Math.round(rrsp),
-            fhsa_balance: Math.round(fhsa),
-            unregistered_balance: Math.round(unregistered),
+            total_balance: roundedTotal,
+            tfsa_balance: roundedTfsa,
+            rrsp_balance: roundedRrsp,
+            fhsa_balance: roundedFhsa,
+            unregistered_balance: roundedUnregistered,
             yearly_contribution: yearlyContribution,
         });
     }
