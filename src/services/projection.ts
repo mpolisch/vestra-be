@@ -73,8 +73,7 @@ export const getProjection = async (
         const roundedRrsp = Math.round(rrsp);
         const roundedFhsa = Math.round(fhsa);
         const roundedUnregistered = Math.round(unregistered);
-        const roundedTotal =
-            roundedTfsa + roundedRrsp + roundedFhsa + roundedUnregistered;
+        const roundedTotal = roundedTfsa + roundedRrsp + roundedFhsa + roundedUnregistered;
 
         dataPoints.push({
             age,
