@@ -39,7 +39,7 @@ export const planBaseSchema = z.object({
     risk_tolerance: z.enum(['conservative', 'moderate', 'aggressive'], {
         error: 'Invalid risk tolerance',
     }),
-    retirement_goal: z.number().positive('Retirement goal must be positive').optional(),
+    retirement_goal: z.number().positive('Retirement goal must be positive').nullable().optional(),
     tfsa_balance: z.number().min(0, 'TFSA balance cannot be negative'),
     rrsp_balance: z.number().min(0, 'RRSP balance cannot be negative'),
     fhsa_balance: z.number().min(0, 'FHSA balance cannot be negative'),
@@ -80,7 +80,7 @@ export const createPlanSchema = planBaseSchema.superRefine((data, ctx) => {
     }
 
     // Retirement goal vs. current savings
-    if (data.retirement_goal !== undefined && data.retirement_goal < data.current_savings) {
+    if (data.retirement_goal != null && data.retirement_goal < data.current_savings) {
         ctx.addIssue({
             code: 'custom',
             message: 'Retirement goal should be greater than current savings',

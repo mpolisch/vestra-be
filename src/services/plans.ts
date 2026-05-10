@@ -82,8 +82,11 @@ export const updatePlan = async (
         monthly_contributions:
             data.monthly_contributions ?? parseFloat(existing.monthly_contributions),
         retirement_goal:
-            data.retirement_goal ??
-            (existing.retirement_goal !== null ? parseFloat(existing.retirement_goal) : undefined),
+            'retirement_goal' in data
+                ? (data.retirement_goal ?? null)
+                : existing.retirement_goal !== null
+                  ? parseFloat(existing.retirement_goal)
+                  : null,
         tfsa_balance: data.tfsa_balance ?? parseFloat(existing.tfsa_balance),
         rrsp_balance: data.rrsp_balance ?? parseFloat(existing.rrsp_balance),
         fhsa_balance: data.fhsa_balance ?? parseFloat(existing.fhsa_balance),
@@ -103,7 +106,11 @@ export const updatePlan = async (
     if (accountTotal > merged.current_savings) {
         throw new AppError('Sum of account balances cannot exceed total current savings', 422);
     }
-    if (merged.retirement_goal !== undefined && merged.retirement_goal < merged.current_savings) {
+    if (
+        merged.retirement_goal !== null &&
+        merged.retirement_goal !== undefined &&
+        merged.retirement_goal < merged.current_savings
+    ) {
         throw new AppError('Retirement goal should be greater than current savings', 422);
     }
 
@@ -115,6 +122,7 @@ export const updatePlan = async (
     for (const [col, value] of Object.entries(data)) {
         if (value === undefined || !ALLOWED_UPDATE_COLUMNS.has(col)) continue;
         setClauses.push(`${col} = $${idx}`);
+        // null is a valid value (explicitly clears a nullable column)
         values.push(value);
         idx++;
     }
