@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 // DATABASE_URL is validated inside db.ts before the pool is created.
 // Validate the remaining vars here before any other imports run.
-const REQUIRED_VARS = ['JWT_SECRET', 'CORS_ORIGIN'] as const;
+const REQUIRED_VARS = ['JWT_SECRET', 'CORS_ORIGIN', 'ANTHROPIC_API_KEY'] as const;
 for (const varName of REQUIRED_VARS) {
     if (!process.env[varName]) throw new Error(`Missing required env var: ${varName}`);
 }
@@ -12,9 +12,26 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
 import type { Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import { authRouter } from './routes/auth.js';
 import { plansRouter } from './routes/plans.js';
 import { errorHandler } from './middleware/errorHandler.js';
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: { status: 'error', message: 'Too many requests, please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const chatLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 10,
+    message: { status: 'error', message: 'Too many messages, please slow down.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 const app = express();
 
@@ -29,6 +46,9 @@ app.use(
 
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
+
+app.use('/api/auth', authLimiter);
+app.use('/api/plans', chatLimiter);
 
 app.use('/api/auth', authRouter);
 app.use('/api/plans', plansRouter);
