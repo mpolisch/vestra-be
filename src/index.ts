@@ -45,7 +45,7 @@ app.use(errorHandler);
 
 const PORT: number = parseInt(process.env.PORT || '4000', 10);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
