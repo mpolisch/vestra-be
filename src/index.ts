@@ -12,27 +12,10 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
 import type { Request, Response } from 'express';
-import rateLimit from 'express-rate-limit';
+import { authLimiter } from './middleware/rateLimiters.js';
 import { authRouter } from './routes/auth.js';
 import { plansRouter } from './routes/plans.js';
 import { errorHandler } from './middleware/errorHandler.js';
-
-const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 20,
-    message: { status: 'error', message: 'Too many requests, please try again later.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-const chatLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 10,
-    message: { status: 'error', message: 'Too many messages, please slow down.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
 const app = express();
 
 app.use(helmet());
@@ -48,7 +31,6 @@ app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
 app.use('/api/auth', authLimiter);
-app.use('/api/plans', chatLimiter);
 
 app.use('/api/auth', authRouter);
 app.use('/api/plans', plansRouter);
