@@ -5,6 +5,8 @@ import { getPlanById } from './plans.js';
 import { getProjection } from './projection.js';
 import { Anthropic } from '@anthropic-ai/sdk/client.js';
 
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
 export const getMessages = async (planId: string, userId: string): Promise<ChatMessage[]> => {
     await getPlanById(planId, userId);
 
@@ -62,7 +64,6 @@ export const sendMessage = async (
         { role: 'user' as const, content: data.message },
     ];
 
-    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const response = await anthropic.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
