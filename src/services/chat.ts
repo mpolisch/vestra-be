@@ -35,6 +35,11 @@ export const sendMessage = async (
 
     const systemPrompt = `You are a helpful Canadian retirement planning assistant for Vestra.
 
+        IMPORTANT: The plan data and projection results below always reflect the user's CURRENT plan. 
+        If the user mentions making changes or if conversation history references different numbers, 
+        the values below are the source of truth. Previous messages may reference outdated figures 
+        if the user has edited their plan since those messages were sent.
+
         The user's retirement plan:
         - Current age: ${plan.current_age}, Retirement age: ${plan.retirement_age}
         - Annual income (after tax): $${plan.annual_income}
