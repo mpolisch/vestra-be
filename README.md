@@ -2,7 +2,7 @@
 
 Vestra is an AI-powered retirement planning tool for Canadians. Input your financial details, visualize your retirement projection, and chat with an AI assistant that understands your actual plan.
 
-Live API: https://vestra-be-poduction.up.railway.app
+Live API: https://vestra-be-production.up.railway.app
 Frontend: https://vestra-chi.vercel.app
 Frontend Repo: [vestra-fe](https://github.com/mpolisch/vestra-fe)
 
@@ -162,6 +162,7 @@ Known simplifications (documented as future enhancements):
 ---
 
 ## Future Enhancements
+
 - AI streaming responses: SSE-based streaming for real-time chat feel
 - AI tool use: allow Claude to call projection recalculation and plan update functions mid-conversation for real-time "what if" scenarios
 - CRA contribution limits: enforce annual TFSA ($7,000), RRSP (18% of income) limits with overflow logic
@@ -179,3 +180,13 @@ Known simplifications (documented as future enhancements):
 - Unit tests for projection logic: Jest tests for compound growth calculations and contribution allocation
 - PDF export: generate downloadable retirement plan summary
 - Province-level tax calculations: federal + provincial tax brackets for more accurate income modeling
+- Content-Security-Policy headers: explicit CSP configuration via helmet to restrict script sources, prevent XSS, and whitelist known domains (Vercel CDN, Railway API, Google Fonts). Skipped for initial deployment due to misconfiguration risk with Recharts inline styles and third-party fonts
+
+---
+
+## Known Limitations
+
+- Chat history might reference stale plan data if the user edits their plan mid-conversation
+- In-memory rate limiting can't be shared across instances
+- JWT tokens have no server-side revocation so a stolen token could remain valid for 7 days
+- CRA contributions limits are not enforced, meaning TFSA, RRSP, and FHSA contributions are simplified
