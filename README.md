@@ -126,7 +126,7 @@ API runs at [http://localhost:4000](http://localhost:4000)
 ## Security
 
 - Passwords hashed with bcrypt (12 rounds)
-- JWT stored in httpOnly, Secure, SameSite=none cookies (cross-doman Vercel/Railway)
+- JWT stored in httpOnly, Secure, SameSite=strict cookies
 - All database queries use parameterized statements (SQL injection prevention)
 - Secure HTTP headers via helmet.js
 - Rate limiting on auth endpoints: 20 req/15min
