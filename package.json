@@ -27,6 +27,7 @@
     },
     "homepage": "https://github.com/mpolisch/vestra-be#readme",
     "dependencies": {
+        "@anthropic-ai/sdk": "^0.95.1",
         "bcrypt": "^6.0.0",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.6",

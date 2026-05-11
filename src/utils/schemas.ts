@@ -94,3 +94,9 @@ export const updatePlanSchema = planBaseSchema.partial();
 
 export type CreatePlanDTO = z.infer<typeof createPlanSchema>;
 export type UpdatePlanDTO = z.infer<typeof updatePlanSchema>;
+
+export const chatMessageSchema = z.object({
+    message: z.string().min(1, 'Message cannot be empty').max(1000, 'Message is too long'),
+});
+
+export type ChatMessageDTO = z.infer<typeof chatMessageSchema>;
