@@ -8,23 +8,17 @@ import { BCRYPT_ROUNDS, JWT_EXPIRES_IN } from '../config/constants.js';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export const registerUser = async (data: RegisterDTO): Promise<PublicUser | null> => {
+export const registerUser = async (data: RegisterDTO): Promise<void> => {
     const { email, password } = data;
 
     const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
-    // ON CONFLICT DO NOTHING prevents email enumeration and is atomic
-    // No race condition between a SELECT check and INSERT
-    const result = await pool.query(
+    await pool.query(
         `INSERT INTO users (email, password_hash)
          VALUES ($1, $2)
-         ON CONFLICT (email) DO NOTHING
-         RETURNING id, email, created_at, updated_at`,
+         ON CONFLICT (email) DO NOTHING`,
         [email, passwordHash],
     );
-
-    // Returns null if email was already taken, caller always responds with 201
-    return result.rows[0] ?? null;
 };
 
 export const loginUser = async (data: LoginDTO): Promise<{ user: PublicUser; token: string }> => {

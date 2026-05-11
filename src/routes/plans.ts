@@ -4,6 +4,7 @@ import * as projectionController from '../controllers/projection.js';
 import * as chatController from '../controllers/chat.js';
 import { validate } from '../middleware/validate.js';
 import { requireAuth } from '../middleware/auth.js';
+import { chatLimiter } from '../middleware/rateLimiters.js';
 import { createPlanSchema, updatePlanSchema, chatMessageSchema } from '../utils/schemas.js';
 
 const router = Router();
@@ -15,6 +16,12 @@ router.put('/:id', requireAuth, validate(updatePlanSchema), plansController.upda
 router.delete('/:id', requireAuth, plansController.deletePlan);
 router.get('/:id/projection', requireAuth, projectionController.getProjection);
 router.get('/:id/chat', requireAuth, chatController.getMessages);
-router.post('/:id/chat', requireAuth, validate(chatMessageSchema), chatController.sendMessage);
+router.post(
+    '/:id/chat',
+    requireAuth,
+    chatLimiter,
+    validate(chatMessageSchema),
+    chatController.sendMessage,
+);
 
 export { router as plansRouter };

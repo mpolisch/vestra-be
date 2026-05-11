@@ -23,18 +23,11 @@ describe('registerUser', () => {
         jest.clearAllMocks();
     });
 
-    it('hashes the password and returns a PublicUser on success', async () => {
+    it('hashes the password and inserts user on success', async () => {
         mockHash.mockResolvedValueOnce('hashed_password');
+        mockQuery.mockResolvedValueOnce({ rows: [] });
 
-        const mockUser = {
-            id: 'uuid-1',
-            email: 'test@example.com',
-            created_at: new Date(),
-            updated_at: new Date(),
-        };
-        mockQuery.mockResolvedValueOnce({ rows: [mockUser] });
-
-        const result = await registerUser({
+        await registerUser({
             email: 'test@example.com',
             password: 'Password1!',
         });
@@ -45,19 +38,15 @@ describe('registerUser', () => {
             'test@example.com',
             'hashed_password',
         ]);
-        expect(result).toEqual(mockUser);
     });
 
-    it('returns null when email is already taken (ON CONFLICT DO NOTHING)', async () => {
+    it('does not throw when email is already taken (ON CONFLICT DO NOTHING)', async () => {
         mockHash.mockResolvedValueOnce('hashed_password');
         mockQuery.mockResolvedValueOnce({ rows: [] });
 
-        const result = await registerUser({
-            email: 'taken@example.com',
-            password: 'Password1!',
-        });
-
-        expect(result).toBeNull();
+        await expect(
+            registerUser({ email: 'taken@example.com', password: 'Password1!' }),
+        ).resolves.toBeUndefined();
     });
 
     it('propagates database errors', async () => {

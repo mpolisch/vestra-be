@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 // DATABASE_URL is validated inside db.ts before the pool is created.
 // Validate the remaining vars here before any other imports run.
-const REQUIRED_VARS = ['JWT_SECRET', 'CORS_ORIGIN'] as const;
+const REQUIRED_VARS = ['JWT_SECRET', 'CORS_ORIGIN', 'ANTHROPIC_API_KEY'] as const;
 for (const varName of REQUIRED_VARS) {
     if (!process.env[varName]) throw new Error(`Missing required env var: ${varName}`);
 }
@@ -12,11 +12,13 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
 import type { Request, Response } from 'express';
+import { authLimiter } from './middleware/rateLimiters.js';
 import { authRouter } from './routes/auth.js';
 import { plansRouter } from './routes/plans.js';
 import { errorHandler } from './middleware/errorHandler.js';
-
 const app = express();
+
+app.set('trust proxy', 1);
 
 app.use(helmet());
 
@@ -29,6 +31,8 @@ app.use(
 
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
+
+app.use('/api/auth', authLimiter);
 
 app.use('/api/auth', authRouter);
 app.use('/api/plans', plansRouter);
