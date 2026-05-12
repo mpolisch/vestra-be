@@ -4,7 +4,12 @@ import type { ChatMessageDTO } from '../utils/schemas.js';
 import { getPlanById } from './plans.js';
 import { getProjection } from './projection.js';
 import { Anthropic } from '@anthropic-ai/sdk/client.js';
-import { RateLimitError, InternalServerError, APIConnectionError } from '@anthropic-ai/sdk';
+import {
+    RateLimitError,
+    InternalServerError,
+    APIConnectionError,
+    APIError,
+} from '@anthropic-ai/sdk';
 import { AppError } from '../utils/AppError.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -83,7 +88,11 @@ Answer questions about their specific numbers in plain English. Be honest about 
                 503,
             );
         }
-        if (err instanceof InternalServerError || err instanceof APIConnectionError) {
+        if (
+            err instanceof InternalServerError ||
+            err instanceof APIConnectionError ||
+            (err instanceof APIError && err.status >= 500)
+        ) {
             throw new AppError(
                 'The AI assistant is temporarily unavailable. Please try again shortly.',
                 503,
