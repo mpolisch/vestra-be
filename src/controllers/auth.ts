@@ -19,7 +19,7 @@ export const login = async (req: Request, res: Response) => {
     res.cookie(COOKIE_NAME, token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        sameSite: 'strict',
         maxAge: COOKIE_MAX_AGE,
         path: '/',
     });
@@ -32,7 +32,7 @@ export const logout = (_req: Request, res: Response) => {
         path: '/',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        sameSite: 'strict',
     });
     return sendSuccess(res, { message: 'Logged out successfully' });
 };
