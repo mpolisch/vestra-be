@@ -4,6 +4,8 @@ import type { ChatMessageDTO } from '../utils/schemas.js';
 import { getPlanById } from './plans.js';
 import { getProjection } from './projection.js';
 import { Anthropic } from '@anthropic-ai/sdk/client.js';
+import { RateLimitError, InternalServerError, APIConnectionError } from '@anthropic-ai/sdk';
+import { AppError } from '../utils/AppError.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -66,12 +68,29 @@ Answer questions about their specific numbers in plain English. Be honest about 
         { role: 'user' as const, content: data.message },
     ];
 
-    const response = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages,
-    });
+    let response;
+    try {
+        response = await anthropic.messages.create({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 1024,
+            system: systemPrompt,
+            messages,
+        });
+    } catch (err) {
+        if (err instanceof RateLimitError) {
+            throw new AppError(
+                'The AI assistant is currently rate limited. Please try again in a moment.',
+                503,
+            );
+        }
+        if (err instanceof InternalServerError || err instanceof APIConnectionError) {
+            throw new AppError(
+                'The AI assistant is temporarily unavailable. Please try again shortly.',
+                503,
+            );
+        }
+        throw err;
+    }
 
     const firstBlock = response.content[0];
 
